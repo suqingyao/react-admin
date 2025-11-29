@@ -1,15 +1,18 @@
 import type { AppRoute } from '../type';
-import DashboardPage from '@/pages/dashboard/page';
+import Login from '@/pages/auth/login';
 import LazyLoad from '../LazyLoad';
 
 export default [
   {
-    path: '/dashboard',
+    path: '/auth/login',
     element: (
       <LazyLoad>
-        <DashboardPage />
+        <Login />
       </LazyLoad>
     ),
-    meta: { title: '工作台', icon: 'ri:dashboard-2-line' },
+    meta: {
+      title: '登录',
+      standalone: true,
+    },
   },
 ] as AppRoute[];

@@ -1,13 +1,18 @@
-import { NavLink } from 'react-router';
-import { Button } from '@/components/ui/button';
+import { Button, Result } from 'antd';
+import { useNavigate } from 'react-router';
 
 export default function NotFound() {
+  const navigate = useNavigate();
   return (
-    <div className="size-full flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold">404 Not Found</h1>
-      <NavLink to="/">
-        <Button variant="link">Back to Home</Button>
-      </NavLink>
-    </div>
+    <Result
+      status="404"
+      title="404"
+      subTitle="Sorry, the page you visited does not exist."
+      extra={(
+        <Button type="primary" onClick={() => navigate(-1)}>
+          Back to Home
+        </Button>
+      )}
+    />
   );
 }

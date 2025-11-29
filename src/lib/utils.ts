@@ -1,11 +1,3 @@
-import type { ClassValue } from 'clsx';
-import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
 export function tryParseJSON<T>(json: string): T | null {
   try {
     return JSON.parse(json);
@@ -24,4 +16,8 @@ export function tryJSONStringify<T>(obj: T): string | null {
     console.error('Error stringifying JSON:', error);
     return null;
   }
+}
+
+export function cn(...classes: Array<string | number | boolean | undefined | null>) {
+  return classes.filter(Boolean).join(' ');
 }
