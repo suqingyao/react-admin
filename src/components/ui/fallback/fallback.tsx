@@ -37,14 +37,7 @@ export interface FallbackProps {
 }
 
 export function Fallback(props: FallbackProps) {
-  const {
-    description,
-    homePath = '/',
-    image,
-    status = 'coming-soon',
-    title,
-    action,
-  } = props;
+  const { description, homePath = '/', image, status = 'coming-soon', title, action } = props;
 
   const navigate = useNavigate();
 
@@ -116,20 +109,14 @@ export function Fallback(props: FallbackProps) {
 
   return (
     <div className="flex size-full flex-col items-center justify-center duration-300">
-      {image
-        ? (
-            <img src={image} className="md:1/3 w-1/2 lg:w-1/4" alt="fallback" />
-          )
-        : (
-            FallbackIcon && <FallbackIcon />
-          )}
+      {image ? (
+        <img src={image} className="md:1/3 w-1/2 lg:w-1/4" alt="fallback" />
+      ) : (
+        FallbackIcon && <FallbackIcon />
+      )}
       <div className="flex flex-col items-center justify-center">
-        <p className="text-foreground mt-8 text-2xl md:text-3xl lg:text-4xl">
-          {titleText}
-        </p>
-        <p className="text-muted-foreground md:text-md my-4 lg:text-lg">
-          {descText}
-        </p>
+        <p className="text-foreground mt-8 text-2xl md:text-3xl lg:text-4xl">{titleText}</p>
+        <p className="text-muted-foreground md:text-md my-4 lg:text-lg">{descText}</p>
         {action || (
           <>
             {showBack && (
