@@ -1,5 +1,5 @@
-import type { PaginationProps, TableColumnProps } from 'antd';
 import { cn } from '@suqingyao/utils';
+import type { PaginationProps, TableColumnProps } from 'antd';
 import { Pagination, Table } from 'antd';
 
 interface NovaTableProps {
