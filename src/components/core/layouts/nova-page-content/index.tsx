@@ -60,7 +60,7 @@ export function NovaPageContent() {
     return () => {
       window.cancelAnimationFrame(id);
     };
-  }, [refresh]);
+  }, []);
 
   useEffect(() => {
     setShowTransitionMask(true);
@@ -70,7 +70,7 @@ export function NovaPageContent() {
     return () => {
       window.clearTimeout(timer);
     };
-  }, [isFullPage, pageTransition]);
+  }, []);
 
   const currentRoute = matches[matches.length - 1];
   const routeMeta = (currentRoute?.route as AppRouteRecord)?.meta;
