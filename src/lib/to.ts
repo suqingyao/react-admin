@@ -11,8 +11,7 @@ export async function to<T, U = Error>(
     const data = await promise;
     const result: [null, T] = [null, data];
     return result;
-  }
-  catch (error) {
+  } catch (error) {
     if (errorExt) {
       const parsedError = Object.assign({}, error, errorExt);
       return [parsedError as U, undefined];

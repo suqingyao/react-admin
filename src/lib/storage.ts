@@ -1,9 +1,13 @@
-import { StorageManager } from '@suqingyao/utils'
+import { StorageManager } from '@suqingyao/utils';
 
+const sessionStorageManager = new StorageManager({
+  prefix: '__REACT_ADMIN__',
+  storageType: 'sessionStorage',
+});
 
-const storageUtil = new StorageManager({
-  prefix: '__REACT_ADMIN__'
-})
+const localStorageManager = new StorageManager({
+  prefix: '__REACT_ADMIN__',
+  storageType: 'localStorage',
+});
 
-export default storageUtil
-
+export { sessionStorageManager, localStorageManager };
