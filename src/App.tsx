@@ -1,11 +1,14 @@
-import { RouterView } from './router'
+import { Provider } from './providers';
+import { RouterView } from './router';
 
 function App() {
   return (
-    <div className="w-full h-full">
-      <RouterView />
+    <div className="size-full">
+      <Provider>
+        <RouterView />
+      </Provider>
     </div>
-  )
+  );
 }
 
 export default App;
