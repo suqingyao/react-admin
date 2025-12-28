@@ -14,10 +14,9 @@ export function LazyLoad(importFunc: () => Promise<{ default: ComponentType<any>
     <Suspense
       fallback={
         <div className="flex size-full items-center justify-center">
-          <Spin />
+          <Spin size="large" />
         </div>
-      }
-    >
+      }>
       <LazyComponent />
     </Suspense>
   );

@@ -1,5 +1,5 @@
-import { DefaultLayout } from '@/layouts';
 import type { AppRouteRecord } from '@/types';
+import { AppGuard } from '../guards';
 import { coreRoutes, fallbackRoute } from './core';
 
 const dynamicModules = import.meta.glob('./modules/**/*.tsx', { eager: true }) as Record<
@@ -23,8 +23,8 @@ const routes: AppRouteRecord[] = [
       title: '首页',
       icon: 'ri:home-2-line',
     },
-    element: <DefaultLayout />,
-    children: [...dynamicRoutes, fallbackRoute],
+    element: <AppGuard />,
+    children: [...dynamicRoutes],
   },
   fallbackRoute,
 ];

@@ -1,22 +1,36 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation, useMatches, useNavigate } from 'react-router';
-import { usePermission } from '@/hooks/web/usePermission';
+import { useLocation, useMatches, useNavigate } from 'react-router';
+import { usePermission } from '@/hooks/biz/usePermission';
+import { setPageTitle } from '@/lib/router';
 import { useUserStore } from '@/store';
+import type { AppRouteRecord } from '@/types';
 import { HOME_PAGE_PATH } from '../constants';
 
-export function AuthGuard() {
+export const isStandaloneAuthRoute = (pathname: string): boolean => {
+  return pathname.startsWith('/auth');
+};
+
+const getCurrentRouteMeta = (
+  matches: ReturnType<typeof useMatches>,
+): AppRouteRecord['meta'] | undefined => {
+  const currentRoute = (matches as any[])[matches.length - 1];
+  if (!currentRoute) return undefined;
+  const routeMeta = (currentRoute.route as any)?.meta as AppRouteRecord['meta'] | undefined;
+  return routeMeta;
+};
+
+export function AuthGuard({ children }: { children?: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const matches = useMatches();
-  const { token } = useUserStore();
+  const { accessToken } = useUserStore();
   const { hasPermission } = usePermission();
 
   useEffect(() => {
     const pathname = location.pathname;
-    const isAuthPage = pathname.startsWith('/auth');
+    const isAuthPage = isStandaloneAuthRoute(pathname);
 
-    // 1. Check token
-    if (!token) {
+    if (!accessToken) {
       if (!isAuthPage) {
         navigate('/auth/login', { replace: true });
       }
@@ -29,17 +43,18 @@ export function AuthGuard() {
       return;
     }
 
-    // 3. Check permissions
-    const currentRoute = matches[matches.length - 1];
-    if (currentRoute) {
-      const routeMeta = (currentRoute.route as any).meta;
-      const requiredRoles = routeMeta?.roles;
+    const routeMeta = getCurrentRouteMeta(matches);
+    if (routeMeta) {
+      const requiredRoles = routeMeta.roles;
 
       if (requiredRoles && !hasPermission(requiredRoles)) {
         navigate('/403', { replace: true });
+        return;
       }
-    }
-  }, [location.pathname, token, matches, hasPermission, navigate]);
 
-  return <Outlet />;
+      setPageTitle(routeMeta);
+    }
+  }, [accessToken, hasPermission, location.pathname, matches, navigate]);
+
+  return children;
 }
