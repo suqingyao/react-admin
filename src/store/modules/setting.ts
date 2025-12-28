@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import AppConfig from '@/config';
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting';
 import type { ContainerWidthEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum';
@@ -259,87 +260,94 @@ export interface SettingStore {
   setDualMenuShowText: (show: boolean) => void;
 }
 
-export const useSettingStore = create<SettingStore>((set, get) => ({
-  menuType: SETTING_DEFAULT_CONFIG.menuType,
-  menuOpenWidth: SETTING_DEFAULT_CONFIG.menuOpenWidth,
-  menuOpen: SETTING_DEFAULT_CONFIG.menuOpen,
-  dualMenuShowText: SETTING_DEFAULT_CONFIG.dualMenuShowText,
+export const useSettingStore = create<SettingStore>()(
+  devtools(
+    (set, get) => ({
+      menuType: SETTING_DEFAULT_CONFIG.menuType,
+      menuOpenWidth: SETTING_DEFAULT_CONFIG.menuOpenWidth,
+      menuOpen: SETTING_DEFAULT_CONFIG.menuOpen,
+      dualMenuShowText: SETTING_DEFAULT_CONFIG.dualMenuShowText,
 
-  systemThemeType: SETTING_DEFAULT_CONFIG.systemThemeType,
-  systemThemeMode: SETTING_DEFAULT_CONFIG.systemThemeMode,
-  menuThemeType: SETTING_DEFAULT_CONFIG.menuThemeType,
-  systemThemeColor: SETTING_DEFAULT_CONFIG.systemThemeColor,
+      systemThemeType: SETTING_DEFAULT_CONFIG.systemThemeType,
+      systemThemeMode: SETTING_DEFAULT_CONFIG.systemThemeMode,
+      menuThemeType: SETTING_DEFAULT_CONFIG.menuThemeType,
+      systemThemeColor: SETTING_DEFAULT_CONFIG.systemThemeColor,
 
-  showMenuButton: SETTING_DEFAULT_CONFIG.showMenuButton,
-  showFastEnter: SETTING_DEFAULT_CONFIG.showFastEnter,
-  showRefreshButton: SETTING_DEFAULT_CONFIG.showRefreshButton,
-  showCrumbs: SETTING_DEFAULT_CONFIG.showCrumbs,
-  showWorkTab: SETTING_DEFAULT_CONFIG.showWorkTab,
-  showLanguage: SETTING_DEFAULT_CONFIG.showLanguage,
-  showNprogress: SETTING_DEFAULT_CONFIG.showNprogress,
-  showSettingGuide: SETTING_DEFAULT_CONFIG.showSettingGuide,
-  showFestivalText: SETTING_DEFAULT_CONFIG.showFestivalText,
-  watermarkVisible: SETTING_DEFAULT_CONFIG.watermarkVisible,
+      showMenuButton: SETTING_DEFAULT_CONFIG.showMenuButton,
+      showFastEnter: SETTING_DEFAULT_CONFIG.showFastEnter,
+      showRefreshButton: SETTING_DEFAULT_CONFIG.showRefreshButton,
+      showCrumbs: SETTING_DEFAULT_CONFIG.showCrumbs,
+      showWorkTab: SETTING_DEFAULT_CONFIG.showWorkTab,
+      showLanguage: SETTING_DEFAULT_CONFIG.showLanguage,
+      showNprogress: SETTING_DEFAULT_CONFIG.showNprogress,
+      showSettingGuide: SETTING_DEFAULT_CONFIG.showSettingGuide,
+      showFestivalText: SETTING_DEFAULT_CONFIG.showFestivalText,
+      watermarkVisible: SETTING_DEFAULT_CONFIG.watermarkVisible,
 
-  autoClose: SETTING_DEFAULT_CONFIG.autoClose,
-  uniqueOpened: SETTING_DEFAULT_CONFIG.uniqueOpened,
-  colorWeak: SETTING_DEFAULT_CONFIG.colorWeak,
-  refresh: SETTING_DEFAULT_CONFIG.refresh,
-  holidayFireworksLoaded: SETTING_DEFAULT_CONFIG.holidayFireworksLoaded,
+      autoClose: SETTING_DEFAULT_CONFIG.autoClose,
+      uniqueOpened: SETTING_DEFAULT_CONFIG.uniqueOpened,
+      colorWeak: SETTING_DEFAULT_CONFIG.colorWeak,
+      refresh: SETTING_DEFAULT_CONFIG.refresh,
+      holidayFireworksLoaded: SETTING_DEFAULT_CONFIG.holidayFireworksLoaded,
 
-  boxBorderMode: SETTING_DEFAULT_CONFIG.boxBorderMode,
-  pageTransition: SETTING_DEFAULT_CONFIG.pageTransition,
-  tabStyle: SETTING_DEFAULT_CONFIG.tabStyle,
-  customRadius: SETTING_DEFAULT_CONFIG.customRadius,
-  containerWidth: SETTING_DEFAULT_CONFIG.containerWidth,
+      boxBorderMode: SETTING_DEFAULT_CONFIG.boxBorderMode,
+      pageTransition: SETTING_DEFAULT_CONFIG.pageTransition,
+      tabStyle: SETTING_DEFAULT_CONFIG.tabStyle,
+      customRadius: SETTING_DEFAULT_CONFIG.customRadius,
+      containerWidth: SETTING_DEFAULT_CONFIG.containerWidth,
 
-  festivalDate: SETTING_DEFAULT_CONFIG.festivalDate,
+      festivalDate: SETTING_DEFAULT_CONFIG.festivalDate,
 
-  getMenuTheme: () => {
-    const dark = get().isDark();
-    if (dark && AppConfig.darkMenuStyles && AppConfig.darkMenuStyles.length)
-      return AppConfig.darkMenuStyles[0] as MenuThemeType;
-    const theme = AppConfig.themeList.find((item) => item.theme === get().menuThemeType);
-    return (theme || AppConfig.themeList[0]) as MenuThemeType;
-  },
-  isDark: () => get().menuThemeType === MenuThemeEnum.DARK,
-  getMenuOpenWidth: () => `${get().menuOpenWidth || SETTING_DEFAULT_CONFIG.menuOpenWidth}px`,
-  getCustomRadius: () => `${get().customRadius || SETTING_DEFAULT_CONFIG.customRadius}rem`,
-  isShowFireworks: () => get().holidayFireworksLoaded,
-  switchMenuLayout: (type: MenuTypeEnum) => set({ menuType: type }),
-  setMenuOpenWidth: (width: number) => set({ menuOpenWidth: width }),
-  setGlobalTheme: (theme: SystemThemeEnum, themeMode: SystemThemeEnum) =>
-    set({ systemThemeType: theme, systemThemeMode: themeMode }),
-  switchMenuStyles: (theme: MenuThemeEnum) => set({ menuThemeType: theme }),
-  setAntdThemeColor: (_theme: SystemThemeEnum) => {
-    /* no-op placeholder for antd theme integration */
-  },
-  setBorderMode: () => set((state) => ({ boxBorderMode: !state.boxBorderMode })),
-  setContainerWidth: (width: ContainerWidthEnum) =>
-    set({ containerWidth: width as unknown as string }),
-  setUniqueOpened: () => set((state) => ({ uniqueOpened: !state.uniqueOpened })),
-  setButton: () => set((state) => ({ showMenuButton: !state.showMenuButton })),
-  setFastEnter: () => set((state) => ({ showFastEnter: !state.showFastEnter })),
-  setAutoClose: () => set((state) => ({ autoClose: !state.autoClose })),
-  setShowRefreshButton: () => set((state) => ({ showRefreshButton: !state.showRefreshButton })),
-  setCrumbs: () => set((state) => ({ showCrumbs: !state.showCrumbs })),
-  setWorkTab: (show: boolean) => set({ showWorkTab: show }),
-  setLanguage: () => set((state) => ({ showLanguage: !state.showLanguage })),
-  setNprogress: () => set((state) => ({ showNprogress: !state.showNprogress })),
-  setColorWeak: () => set((state) => ({ colorWeak: !state.colorWeak })),
-  hideSettingGuide: () => set({ showSettingGuide: false }),
-  openSettingGuide: () => set({ showSettingGuide: true }),
-  setPageTransition: (transition: string) => set({ pageTransition: transition }),
-  setTabStyle: (style: string) => set({ tabStyle: style }),
-  setMenuOpen: (open: boolean) => set({ menuOpen: open }),
-  reload: () => set((state) => ({ refresh: !state.refresh })),
-  setWatermarkVisible: (visible: boolean) => set({ watermarkVisible: visible }),
-  setCustomRadius: (radius: string) => {
-    document.documentElement.style.setProperty('--custom-radius', `${radius}rem`);
-    set({ customRadius: radius });
-  },
-  setHolidayFireworksLoaded: (isLoad: boolean) => set({ holidayFireworksLoaded: isLoad }),
-  setShowFestivalText: (show: boolean) => set({ showFestivalText: show }),
-  setFestivalDate: (date: string) => set({ festivalDate: date }),
-  setDualMenuShowText: (show: boolean) => set({ dualMenuShowText: show }),
-}));
+      getMenuTheme: () => {
+        const dark = get().isDark();
+        if (dark && AppConfig.darkMenuStyles && AppConfig.darkMenuStyles.length)
+          return AppConfig.darkMenuStyles[0] as MenuThemeType;
+        const theme = AppConfig.themeList.find((item) => item.theme === get().menuThemeType);
+        return (theme || AppConfig.themeList[0]) as MenuThemeType;
+      },
+      isDark: () => get().menuThemeType === MenuThemeEnum.DARK,
+      getMenuOpenWidth: () => `${get().menuOpenWidth || SETTING_DEFAULT_CONFIG.menuOpenWidth}px`,
+      getCustomRadius: () => `${get().customRadius || SETTING_DEFAULT_CONFIG.customRadius}rem`,
+      isShowFireworks: () => get().holidayFireworksLoaded,
+      switchMenuLayout: (type: MenuTypeEnum) => set({ menuType: type }),
+      setMenuOpenWidth: (width: number) => set({ menuOpenWidth: width }),
+      setGlobalTheme: (theme: SystemThemeEnum, themeMode: SystemThemeEnum) =>
+        set({ systemThemeType: theme, systemThemeMode: themeMode }),
+      switchMenuStyles: (theme: MenuThemeEnum) => set({ menuThemeType: theme }),
+      setAntdThemeColor: (_theme: SystemThemeEnum) => {
+        /* no-op placeholder for antd theme integration */
+      },
+      setBorderMode: () => set((state) => ({ boxBorderMode: !state.boxBorderMode })),
+      setContainerWidth: (width: ContainerWidthEnum) =>
+        set({ containerWidth: width as unknown as string }),
+      setUniqueOpened: () => set((state) => ({ uniqueOpened: !state.uniqueOpened })),
+      setButton: () => set((state) => ({ showMenuButton: !state.showMenuButton })),
+      setFastEnter: () => set((state) => ({ showFastEnter: !state.showFastEnter })),
+      setAutoClose: () => set((state) => ({ autoClose: !state.autoClose })),
+      setShowRefreshButton: () => set((state) => ({ showRefreshButton: !state.showRefreshButton })),
+      setCrumbs: () => set((state) => ({ showCrumbs: !state.showCrumbs })),
+      setWorkTab: (show: boolean) => set({ showWorkTab: show }),
+      setLanguage: () => set((state) => ({ showLanguage: !state.showLanguage })),
+      setNprogress: () => set((state) => ({ showNprogress: !state.showNprogress })),
+      setColorWeak: () => set((state) => ({ colorWeak: !state.colorWeak })),
+      hideSettingGuide: () => set({ showSettingGuide: false }),
+      openSettingGuide: () => set({ showSettingGuide: true }),
+      setPageTransition: (transition: string) => set({ pageTransition: transition }),
+      setTabStyle: (style: string) => set({ tabStyle: style }),
+      setMenuOpen: (open: boolean) => set({ menuOpen: open }),
+      reload: () => set((state) => ({ refresh: !state.refresh })),
+      setWatermarkVisible: (visible: boolean) => set({ watermarkVisible: visible }),
+      setCustomRadius: (radius: string) => {
+        document.documentElement.style.setProperty('--custom-radius', `${radius}rem`);
+        set({ customRadius: radius });
+      },
+      setHolidayFireworksLoaded: (isLoad: boolean) => set({ holidayFireworksLoaded: isLoad }),
+      setShowFestivalText: (show: boolean) => set({ showFestivalText: show }),
+      setFestivalDate: (date: string) => set({ festivalDate: date }),
+      setDualMenuShowText: (show: boolean) => set({ dualMenuShowText: show }),
+    }),
+    {
+      name: 'setting-store',
+    },
+  ),
+);

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import { getFirstMenuPath } from '@/lib/navigation/route';
 import { HOME_PAGE_PATH } from '@/router';
 import type { AppRouteRecord } from '@/types';
@@ -42,23 +43,30 @@ export interface MenuState {
   clearRemoveRouteFns: () => void;
 }
 
-export const useMenuStore = create<MenuState>((set) => ({
-  homePath: HOME_PAGE_PATH,
-  menuList: [],
-  menuWidth: 200,
-  removeRouteFns: [],
+export const useMenuStore = create<MenuState>()(
+  devtools(
+    (set) => ({
+      homePath: HOME_PAGE_PATH,
+      menuList: [],
+      menuWidth: 200,
+      removeRouteFns: [],
 
-  setMenuList: (menuList) =>
-    set({ menuList, homePath: HOME_PAGE_PATH || getFirstMenuPath(menuList) }),
-  setHomePath: (homePath) => set({ homePath }),
-  addRemoveRouteFns: (fns) =>
-    set((state) => ({ removeRouteFns: [...state.removeRouteFns, ...fns] })),
-  removeAllDynamicRoutes: () =>
-    set((state) => {
-      state.removeRouteFns.forEach((fn) => fn());
-      return {
-        removeRouteFns: [],
-      };
+      setMenuList: (menuList) =>
+        set({ menuList, homePath: HOME_PAGE_PATH || getFirstMenuPath(menuList) }),
+      setHomePath: (homePath) => set({ homePath }),
+      addRemoveRouteFns: (fns) =>
+        set((state) => ({ removeRouteFns: [...state.removeRouteFns, ...fns] })),
+      removeAllDynamicRoutes: () =>
+        set((state) => {
+          state.removeRouteFns.forEach((fn) => fn());
+          return {
+            removeRouteFns: [],
+          };
+        }),
+      clearRemoveRouteFns: () => set({ removeRouteFns: [] }),
     }),
-  clearRemoveRouteFns: () => set({ removeRouteFns: [] }),
-}));
+    {
+      name: 'menu-store',
+    },
+  ),
+);
