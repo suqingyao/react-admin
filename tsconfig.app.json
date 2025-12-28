@@ -12,9 +12,7 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "types": ["vite/client"],
     "allowImportingTsExtensions": true,
@@ -26,7 +24,6 @@
     "noUnusedParameters": true,
     "noEmit": true,
     "verbatimModuleSyntax": true,
-    "erasableSyntaxOnly": true,
     "skipLibCheck": true,
     "noUncheckedSideEffectImports": true
   },
