@@ -27,8 +27,8 @@
  *
  */
 
-import type { SystemConfig } from '@/types/config';
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum';
+import type { SystemConfig } from '@/types/config';
 import { configImages } from './assets/images';
 import fastEnterConfig from './modules/fastEnter';
 import { headerBarConfig } from './modules/headerBar';
@@ -75,7 +75,11 @@ const appConfig = {
     { name: 'Left', value: MenuTypeEnum.LEFT, img: configImages.menuLayouts.vertical },
     { name: 'Top', value: MenuTypeEnum.TOP, img: configImages.menuLayouts.horizontal },
     { name: 'Mixed', value: MenuTypeEnum.TOP_LEFT, img: configImages.menuLayouts.mixed },
-    { name: 'Dual Column', value: MenuTypeEnum.DUAL_MENU, img: configImages.menuLayouts.dualColumn },
+    {
+      name: 'Dual Column',
+      value: MenuTypeEnum.DUAL_MENU,
+      img: configImages.menuLayouts.dualColumn,
+    },
   ],
   // 菜单主题列表
   themeList: [
