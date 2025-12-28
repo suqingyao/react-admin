@@ -1,7 +1,6 @@
-import type { ProColumns } from '@ant-design/pro-components';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { DrawerForm, ProFormSwitch, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { Button, Popconfirm } from 'antd';
+import { dayjs } from '@suqingyao/utils';
+import { Button, Drawer, Form, Input, Popconfirm, Space, Switch, Table } from 'antd';
 import { useState } from 'react';
 
 interface Role {
@@ -27,74 +26,112 @@ const initialRoles: Role[] = Array.from({ length: 60 }).map((_, i) => ({
 export default function RolesPage() {
   const [roles, setRoles] = useState<Role[]>(initialRoles);
   const [editing, setEditing] = useState<Role | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [form] = Form.useForm();
 
-  const columns: ProColumns<Role>[] = [
-    { title: '角色名称', dataIndex: 'name', valueType: 'text' },
-    { title: '角色ID', dataIndex: 'id', copyable: true },
+  const handleEdit = (record: Role) => {
+    setEditing(record);
+    form.setFieldsValue(record);
+    setIsDrawerOpen(true);
+  };
+
+  const handleAdd = () => {
+    setEditing(null);
+    form.resetFields();
+    setIsDrawerOpen(true);
+  };
+
+  const handleSave = () => {
+    form.validateFields().then((values) => {
+      if (editing)
+        setRoles((prev) => prev.map((r) => (r.id === editing.id ? { ...r, ...values } : r)));
+      else setRoles((prev) => [{ id: uid(), createdAt: Date.now(), ...values }, ...prev]);
+
+      setIsDrawerOpen(false);
+    });
+  };
+
+  const columns = [
+    { title: '角色名称', dataIndex: 'name' },
+    { title: '角色ID', dataIndex: 'id' },
     {
       title: '状态',
       dataIndex: 'enabled',
-      valueType: 'select',
-      fieldProps: { options: [{ label: '已启用', value: 'true' }, { label: '未启用', value: 'false' }] },
-      render: (_, r) => <Button type="link" onClick={() => setRoles(list => list.map(x => (x.id === r.id ? { ...x, enabled: !x.enabled } : x)))}>{r.enabled ? '已启用' : '未启用'}</Button>,
+      render: (enabled: boolean, r: Role) => (
+        <Switch
+          checked={enabled}
+          onChange={(checked) => {
+            setRoles((list) => list.map((x) => (x.id === r.id ? { ...x, enabled: checked } : x)));
+          }}
+        />
+      ),
     },
-    { title: '备注', dataIndex: 'remark', hideInSearch: true },
-    { title: '创建时间', dataIndex: 'createdAt', valueType: 'dateTime', hideInSearch: true },
+    { title: '备注', dataIndex: 'remark' },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      render: (ts: number) => dayjs(ts).format('YYYY-MM-DD HH:mm:ss'),
+    },
     {
       title: '操作',
-      valueType: 'option',
-      render: (_, r) => [
-        <Button key="edit" type="link" icon={<EditOutlined />} onClick={() => setEditing(r)}>修改</Button>,
-        <Popconfirm key="del" title="确认删除此角色？" okText="删除" cancelText="取消" onConfirm={() => setRoles(list => list.filter(x => x.id !== r.id))}>
-          <Button type="link" danger icon={<DeleteOutlined />}>删除</Button>
-        </Popconfirm>,
-      ],
+      render: (_: any, r: Role) => (
+        <Space>
+          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(r)}>
+            修改
+          </Button>
+          <Popconfirm
+            title="确认删除此角色？"
+            onConfirm={() => setRoles((list) => list.filter((x) => x.id !== r.id))}
+          >
+            <Button type="link" danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
     },
   ];
 
-  const request = async (params: Record<string, any>) => {
-    const { name, id, enabled } = params;
-    const data = roles.filter((r) => {
-      const n = name ? r.name.toLowerCase().includes(String(name).toLowerCase()) : true;
-      const i = id ? r.id.toLowerCase().includes(String(id).toLowerCase()) : true;
-      const e = enabled !== undefined && enabled !== null && enabled !== '' ? (String(enabled) === 'true' ? r.enabled : !r.enabled) : true;
-      return n && i && e;
-    });
-    return { data, success: true, total: data.length };
-  };
-
   return (
-    <>
-      <ProTable<Role>
-        rowKey="id"
+    <div className="rounded-lg bg-white p-4">
+      <div className="mb-4 flex justify-between">
+        <div className="text-lg font-bold">角色管理</div>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          新建角色
+        </Button>
+      </div>
+      <Table
+        dataSource={roles}
         columns={columns}
-        search={{ labelWidth: 90 }}
-        toolBarRender={() => [<Button key="new" type="primary" icon={<PlusOutlined />} onClick={() => setEditing({ id: uid(), name: '', enabled: true, remark: '', createdAt: Date.now() })}>新增角色</Button>]}
-        request={request}
-        pagination={{ pageSize: 20 }}
+        rowKey="id"
+        pagination={{ pageSize: 10, hideOnSinglePage: true }}
       />
-
-      <DrawerForm
-        open={!!editing}
-        onOpenChange={o => !o && setEditing(null)}
-        title={editing?.name ? '编辑角色' : '新增角色'}
-        size="large"
-        initialValues={editing || {}}
-        onFinish={async (v) => {
-          if (editing && roles.find(r => r.id === editing.id)) {
-            setRoles(list => list.map(x => (x.id === editing.id ? { ...x, ...v } : x)));
-          }
-          else {
-            setRoles(list => [{ id: editing?.id || uid(), name: v.name || '新角色', enabled: v.enabled ?? true, remark: v.remark || '', createdAt: Date.now() }, ...list]);
-          }
-          setEditing(null);
-          return true;
-        }}
+      <Drawer
+        title={editing ? '编辑角色' : '新建角色'}
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        width={500}
+        extra={
+          <Space>
+            <Button onClick={() => setIsDrawerOpen(false)}>取消</Button>
+            <Button type="primary" onClick={handleSave}>
+              提交
+            </Button>
+          </Space>
+        }
       >
-        <ProFormText name="name" label="角色名称" rules={[{ required: true, message: '角色名称必填' }, { min: 2, message: '至少 2 个字符' }]} />
-        <ProFormSwitch name="enabled" label="启用" />
-        <ProFormTextArea name="remark" label="备注" fieldProps={{ rows: 4 }} rules={[{ max: 100, message: '备注不超过 100 字符' }]} />
-      </DrawerForm>
-    </>
+        <Form form={form} layout="vertical">
+          <Form.Item name="name" label="角色名称" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="enabled" label="状态" valuePropName="checked">
+            <Switch />
+          </Form.Item>
+          <Form.Item name="remark" label="备注">
+            <Input.TextArea />
+          </Form.Item>
+        </Form>
+      </Drawer>
+    </div>
   );
 }

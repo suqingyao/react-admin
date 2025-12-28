@@ -1,7 +1,11 @@
 import { Button } from 'antd';
 import { useState } from 'react';
 
-interface Org { id: number; name: string; parentId?: number | null }
+interface Org {
+  id: number;
+  name: string;
+  parentId?: number | null;
+}
 
 const initial: Org[] = [
   { id: 1, name: '总部', parentId: null },
@@ -10,12 +14,11 @@ const initial: Org[] = [
 ];
 
 function OrgTree({ nodes, parentId }: { nodes: Org[]; parentId: number | null }) {
-  const children = nodes.filter(n => (n.parentId ?? null) === parentId);
-  if (!children.length)
-    return null;
+  const children = nodes.filter((n) => (n.parentId ?? null) === parentId);
+  if (!children.length) return null;
   return (
     <ul className="ml-4 list-disc">
-      {children.map(c => (
+      {children.map((c) => (
         <li key={c.id}>
           {c.name}
           <OrgTree nodes={nodes} parentId={c.id} />
@@ -31,15 +34,14 @@ export default function DepartmentsPage() {
   const [form, setForm] = useState<Omit<Org, 'id'>>({ name: '', parentId: null });
 
   const onAdd = () => {
-    const id = items.length ? Math.max(...items.map(i => i.id)) + 1 : 1;
+    const id = items.length ? Math.max(...items.map((i) => i.id)) + 1 : 1;
     setItems([...items, { id, ...form }]);
     setForm({ name: '', parentId: null });
   };
 
   const onUpdate = () => {
-    if (!editing)
-      return;
-    setItems(items.map(i => (i.id === editing.id ? { ...editing, ...form } : i)));
+    if (!editing) return;
+    setItems(items.map((i) => (i.id === editing.id ? { ...editing, ...form } : i)));
     setEditing(null);
     setForm({ name: '', parentId: null });
   };
@@ -50,9 +52,8 @@ export default function DepartmentsPage() {
   };
 
   const onDelete = (id: number) => {
-    setItems(items.filter(i => i.id !== id));
-    if (editing?.id === id)
-      setEditing(null);
+    setItems(items.filter((i) => i.id !== id));
+    if (editing?.id === id) setEditing(null);
   };
 
   return (
@@ -64,16 +65,17 @@ export default function DepartmentsPage() {
             className="h-10 rounded-md border px-3"
             placeholder="部门名称"
             value={form.name}
-            onChange={e => setForm(s => ({ ...s, name: e.target.value }))}
+            onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
           />
           <select
             className="h-10 rounded-md border px-3"
             value={form.parentId ?? ''}
-            onChange={e =>
-              setForm(s => ({ ...s, parentId: e.target.value ? Number(e.target.value) : null }))}
+            onChange={(e) =>
+              setForm((s) => ({ ...s, parentId: e.target.value ? Number(e.target.value) : null }))
+            }
           >
             <option value="">无上级</option>
-            {items.map(i => (
+            {items.map((i) => (
               <option key={i.id} value={i.id}>
                 {i.name}
               </option>
@@ -81,18 +83,19 @@ export default function DepartmentsPage() {
           </select>
         </div>
         <div className="mt-3 flex gap-2">
-          {editing
-            ? (
-                <>
-                  <Button onClick={onUpdate}>保存</Button>
-                  <Button type="link" onClick={() => (setEditing(null), setForm({ name: '', parentId: null }))}>
-                    取消
-                  </Button>
-                </>
-              )
-            : (
-                <Button onClick={onAdd}>新增</Button>
-              )}
+          {editing ? (
+            <>
+              <Button onClick={onUpdate}>保存</Button>
+              <Button
+                type="link"
+                onClick={() => (setEditing(null), setForm({ name: '', parentId: null }))}
+              >
+                取消
+              </Button>
+            </>
+          ) : (
+            <Button onClick={onAdd}>新增</Button>
+          )}
         </div>
       </div>
 
@@ -109,10 +112,10 @@ export default function DepartmentsPage() {
               </tr>
             </thead>
             <tbody>
-              {items.map(i => (
+              {items.map((i) => (
                 <tr key={i.id} className="border-b">
                   <td className="p-3">{i.name}</td>
-                  <td className="p-3">{items.find(x => x.id === i.parentId)?.name ?? '-'}</td>
+                  <td className="p-3">{items.find((x) => x.id === i.parentId)?.name ?? '-'}</td>
                   <td className="p-3 space-x-2">
                     <Button size="small" onClick={() => onEdit(i)}>
                       编辑

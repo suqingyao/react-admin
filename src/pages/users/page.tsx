@@ -1,48 +1,53 @@
-import { useMemo, useState } from 'react'
-import { Button } from 'antd'
+import { Button } from 'antd';
+import { useMemo, useState } from 'react';
 
-type User = { id: number; name: string; email: string; role: string }
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
 
 const initialUsers: User[] = [
   { id: 1, name: 'Admin', email: 'admin@example.com', role: 'admin' },
   { id: 2, name: 'Editor', email: 'editor@example.com', role: 'editor' },
   { id: 3, name: 'Viewer', email: 'viewer@example.com', role: 'viewer' },
-]
+];
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>(initialUsers)
-  const [editing, setEditing] = useState<User | null>(null)
-  const [form, setForm] = useState<Omit<User, 'id'>>({ name: '', email: '', role: 'viewer' })
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [editing, setEditing] = useState<User | null>(null);
+  const [form, setForm] = useState<Omit<User, 'id'>>({ name: '', email: '', role: 'viewer' });
 
-  const resetForm = () => setForm({ name: '', email: '', role: 'viewer' })
+  const resetForm = () => setForm({ name: '', email: '', role: 'viewer' });
 
   const onAdd = () => {
-    const id = users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1
-    setUsers([...users, { id, ...form }])
-    resetForm()
-  }
+    const id = users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1;
+    setUsers([...users, { id, ...form }]);
+    resetForm();
+  };
 
   const onUpdate = () => {
-    if (!editing) return
-    setUsers(users.map((u) => (u.id === editing.id ? { ...editing, ...form } as User : u)))
-    setEditing(null)
-    resetForm()
-  }
+    if (!editing) return;
+    setUsers(users.map((u) => (u.id === editing.id ? ({ ...editing, ...form } as User) : u)));
+    setEditing(null);
+    resetForm();
+  };
 
   const onEdit = (u: User) => {
-    setEditing(u)
-    setForm({ name: u.name, email: u.email, role: u.role })
-  }
+    setEditing(u);
+    setForm({ name: u.name, email: u.email, role: u.role });
+  };
 
   const onDelete = (id: number) => {
-    setUsers(users.filter((u) => u.id !== id))
+    setUsers(users.filter((u) => u.id !== id));
     if (editing?.id === id) {
-      setEditing(null)
-      resetForm()
+      setEditing(null);
+      resetForm();
     }
-  }
+  };
 
-  const roles = useMemo(() => ['admin', 'editor', 'viewer'], [])
+  const roles = useMemo(() => ['admin', 'editor', 'viewer'], []);
 
   return (
     <div className="p-4 space-y-4">
@@ -77,7 +82,9 @@ export default function UsersPage() {
           {editing ? (
             <>
               <Button onClick={onUpdate}>保存</Button>
-              <Button variant="secondary" onClick={() => (setEditing(null), resetForm())}>取消</Button>
+              <Button variant="secondary" onClick={() => (setEditing(null), resetForm())}>
+                取消
+              </Button>
             </>
           ) : (
             <Button onClick={onAdd}>新增</Button>
@@ -115,5 +122,5 @@ export default function UsersPage() {
         </table>
       </div>
     </div>
-  )
+  );
 }
