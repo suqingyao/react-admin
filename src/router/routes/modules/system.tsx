@@ -6,42 +6,30 @@ export default [
   {
     path: '/system',
     meta: {
-      title: '系统管理',
-      icon: 'ri:settings-3-line',
+      title: 'menus.system.title',
     },
     element: <DefaultLayout />,
     children: [
       {
-        path: 'roles',
+        path: 'user',
         meta: {
-          title: '角色管理',
-          icon: 'ri:user-3-line',
+          title: 'menus.system.user',
         },
-        element: LazyLoad(() => import('@/pages/system/roles/page')),
+        element: LazyLoad(() => import('@/pages/system/user/page')),
       },
       {
-        path: 'permissions',
+        path: 'role',
         meta: {
-          title: '权限管理',
-          icon: 'ri:key-2-line',
+          title: 'menus.system.role',
         },
-        element: LazyLoad(() => import('@/pages/system/permissions/page')),
+        element: LazyLoad(() => import('@/pages/system/role/page')),
       },
       {
-        path: 'menus',
+        path: 'menu',
         meta: {
-          title: '菜单管理',
-          icon: 'ri:menu-2-line',
+          title: 'menus.system.menu',
         },
-        element: LazyLoad(() => import('@/pages/system/menus/page')),
-      },
-      {
-        path: 'departments',
-        meta: {
-          title: '部门管理',
-          icon: 'ri:team-line',
-        },
-        element: LazyLoad(() => import('@/pages/system/departments/page')),
+        element: LazyLoad(() => import('@/pages/system/menu/page')),
       },
     ],
   },

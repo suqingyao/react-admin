@@ -6,9 +6,11 @@ import { useUserStore } from '@/store';
 import type { AppRouteRecord } from '@/types';
 import { HOME_PAGE_PATH } from '../constants';
 
-export const isStandaloneAuthRoute = (pathname: string): boolean => {
-  return pathname.startsWith('/auth');
-};
+/**
+ * 判断是否为独立的认证路由（无需登录即可访问）
+ * Currently treats任何以 /auth 开头的路径为独立认证页。
+ */
+export const isStandaloneAuthRoute = (pathname: string): boolean => pathname.startsWith('/auth');
 
 const getCurrentRouteMeta = (
   matches: ReturnType<typeof useMatches>,

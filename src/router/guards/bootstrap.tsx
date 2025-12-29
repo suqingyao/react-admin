@@ -23,7 +23,7 @@ export function BootstrapGuard({ children }: { children?: React.ReactNode }) {
       return;
     }
 
-    if (isStandaloneAuthRoute(pathname)) {
+    if (pathname.startsWith('/auth')) {
       return;
     }
 

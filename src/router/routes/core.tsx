@@ -14,7 +14,7 @@ const coreRoutes: AppRouteRecord[] = [
   {
     path: '/403',
     meta: {
-      title: '403',
+      title: 'menus.exception.forbidden',
       isHide: true,
     },
     element: LazyLoad(() => import('@/pages/_core/fallback/forbidden')),
@@ -22,7 +22,7 @@ const coreRoutes: AppRouteRecord[] = [
   {
     path: '/404',
     meta: {
-      title: '404',
+      title: 'menus.exception.notFound',
       isHide: true,
     },
     element: LazyLoad(() => import('@/pages/_core/fallback/not-found')),
@@ -30,7 +30,7 @@ const coreRoutes: AppRouteRecord[] = [
   {
     path: '/500',
     meta: {
-      title: '500',
+      title: 'menus.exception.serverError',
       isHide: true,
     },
     element: LazyLoad(() => import('@/pages/_core/fallback/internal-error')),
@@ -38,7 +38,7 @@ const coreRoutes: AppRouteRecord[] = [
   {
     path: '/offline',
     meta: {
-      title: 'Offline',
+      title: 'core.offline',
       isHide: true,
     },
     element: LazyLoad(() => import('@/pages/_core/fallback/offline')),
@@ -46,7 +46,7 @@ const coreRoutes: AppRouteRecord[] = [
   {
     path: '/coming-soon',
     meta: {
-      title: 'Coming Soon',
+      title: 'core.comingSoon',
       isHide: true,
     },
     element: LazyLoad(() => import('@/pages/_core/fallback/coming-soon')),
