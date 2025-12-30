@@ -1,42 +1,23 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import en from './langs/en.json';
-import zh from './langs/zh.json';
 
-const resources = {
-  en: { translation: en },
-  zh: { translation: zh },
-};
+import locales from './locale';
 
-const detectLanguage = (): 'en' | 'zh' => {
-  if (typeof navigator !== 'undefined') {
-    const lang = navigator.language.toLowerCase();
-    if (lang.startsWith('zh')) return 'zh';
-  }
-  return 'en';
-};
+export const reactI18nextInstance = i18n.use(initReactI18next);
 
-void i18n.use(initReactI18next).init({
-  resources,
-  lng: detectLanguage(),
-  fallbackLng: 'en',
-  ns: ['translation'],
-  defaultNS: 'translation',
-  interpolation: {
-    escapeValue: false,
-  },
-  initImmediate: false,
-});
+/** Setup plugin i18n */
+export async function setupI18n() {
+  await reactI18nextInstance.init({
+    interpolation: {
+      escapeValue: false,
+    },
+    lng: 'zh-CN',
+    resources: locales,
+  });
+}
 
-const $t = (key: string, options?: Record<string, any>): string => {
-  const translation = i18n.t(key, { defaultValue: '', ...options });
-  if (translation) return translation;
-  const segments = key.split('.');
-  return segments[segments.length - 1] || key;
-};
+export const $t = reactI18nextInstance.t;
 
-const changeLanguage = (lang: 'en' | 'zh') => {
-  return i18n.changeLanguage(lang);
-};
-
-export { $t, changeLanguage, i18n };
+export function setLng(locale: string) {
+  reactI18nextInstance.changeLanguage(locale);
+}

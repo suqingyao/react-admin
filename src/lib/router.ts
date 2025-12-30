@@ -8,11 +8,9 @@
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import AppConfig from '@/config';
+import { $t } from '@/locales';
 import type { AppRouteRecord } from '@/types/router';
 
-// import i18n, { $t } from '@/locales'
-
-/** 顶部进度条配置 */
 export const configureNProgress = () => {
   NProgress.configure({
     easing: 'ease',
@@ -41,20 +39,18 @@ export const setPageTitle = (meta: AppRouteRecord['meta']): void => {
  * @returns 格式化后的菜单标题
  */
 export const formatMenuTitle = (title: string): string => {
-  if (title) {
-    // 暂时注释国际化逻辑
-    /*
-    if (title.startsWith('menus.')) {
-      // 使用 te() 方法检查翻译键值是否存在，避免控制台警告
-      if (i18n.global.te(title)) {
-        return $t(title)
-      } else {
-        // 如果翻译不存在，返回键值的最后部分作为fallback
-        return title.split('.').pop() || title
-      }
-    }
-    */
+  if (!title) {
+    return '';
+  }
+
+  if (!title.startsWith('menus.')) {
     return title;
   }
-  return '';
+
+  const translated = $t(title);
+  console.log('🚀 ~ formatMenuTitle ~ translated:', translated);
+  if (translated) {
+    return translated;
+  }
+  return title.split('.').pop() || title;
 };
