@@ -1,0 +1,25 @@
+{
+  "name": "@nova/tsconfig",
+  "version": "0.0.1",
+  "private": true,
+  "homepage": "https://github.com/nova-js/admin",
+  "bugs": "https://github.com/nova-js/admin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nova-js/admin.git",
+    "directory": "internal/tsconfig"
+  },
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "base.json",
+    "library.json",
+    "node.json",
+    "web-app.json",
+    "web.json"
+  ],
+  "dependencies": {
+    "@nova/types": "workspace:*",
+    "vite": "catalog:"
+  }
+}
