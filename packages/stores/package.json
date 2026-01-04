@@ -1,0 +1,32 @@
+{
+  "name": "@nova/stores",
+  "version": "0.0.1",
+  "homepage": "https://github.com/novajs/nova-admin",
+  "bugs": "https://github.com/novajs/nova-admin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/novajs/nova-admin.git",
+    "directory": "packages/stores"
+  },
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@nova-core/preferences": "workspace:*",
+    "@nova-core/shared": "workspace:*",
+    "@nova-core/typings": "workspace:*",
+    "pinia": "catalog:",
+    "pinia-plugin-persistedstate": "catalog:",
+    "secure-ls": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  }
+}
