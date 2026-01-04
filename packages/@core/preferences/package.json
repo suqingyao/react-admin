@@ -1,11 +1,11 @@
 {
   "name": "@nova-core/preferences",
-  "version": "5.5.9",
-  "homepage": "https://github.com/vbenjs/vue-nova-admin",
-  "bugs": "https://github.com/vbenjs/vue-nova-admin/issues",
+  "version": "0.0.1",
+  "homepage": "https://github.com/novajs/react-nova-admin",
+  "bugs": "https://github.com/novajs/react-nova-admin/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vbenjs/vue-nova-admin.git",
+    "url": "git+https://github.com/novajs/react-nova-admin.git",
     "directory": "packages/@core/preferences"
   },
   "license": "MIT",
