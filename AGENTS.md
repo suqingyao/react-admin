@@ -1,27 +1,56 @@
-# Repository Guidelines
+# AGENTS.md - Project Context for AI Assistants
 
-## Project Structure & Module Organization
-Nova Admin is a Vite + React 19 workspace. Source lives under `src/`, grouped by responsibility:
-- `src/pages/*` provides routed screens that map to `src/router/modules` and enums in `src/enums`.
-- `src/components/core/layouts` contains shell chrome (sidebar, header bar, work tabs) reused across pages.
-- `src/lib`, `src/config`, `src/store/modules`, and `src/types` centralize helpers, runtime knobs, Zustand stores, and shared contracts.
-Global styles land in `src/styles/index.scss` (with granular partials under `src/styles/core`), while static assets belong in `public/`. Mock data for prototyping resides in `src/mock/`.
+## Project Overview
+This is a Monorepo project for **Nova Admin**, a modern React-based admin dashboard.
+The project is currently in a **migration phase**.
 
-## Build, Test, and Development Commands
-- `pnpm install` syncs dependencies; commit the updated `pnpm-lock.yaml` when it changes.
-- `pnpm dev` starts Vite with React Fast Refresh for day-to-day development.
-- `pnpm build` runs `tsc -b` before `vite build`, so TypeScript diagnostics must be resolved.
-- `pnpm preview` serves the production bundle for smoke-testing.
-- `pnpm lint` executes the flat ESLint config (`eslint.config.js`) that wraps the Antfu preset plus React-focused plugins.
+## ⚠️ Important Context regarding Source Code
+- **Active Frontend Source**: `src/` (Root Directory). This contains the currently active application code.
+- **Target Frontend Location**: `apps/web-antd/`. The root `src` is being migrated here.
+- **When writing/reading frontend code**: Unless specifically instructed to work in `apps/web-antd`, assume the code lives in root `src/`.
 
-## Coding Style & Naming Conventions
-Stick to TypeScript, 2-space indentation, and ES modules. Components, layouts, and providers use PascalCase filenames (for example, `NovaHeaderBar.tsx`), while hooks stay camelCase inside `src/hooks`. Route enums and constants should extend the definitions under `src/enums` and `src/lib/constants` instead of inline strings. Tailwind utilities can supplement SCSS, but prefer colocated `.scss` files under `src/styles/core` for complex themes. Run `pnpm lint --fix` before opening a PR to enforce the shared style.
+## Architecture & Tech Stack
+- **Monorepo Manager**: PNPM Workspaces + TurboRepo
+- **Frontend**: 
+  - React 19
+  - Vite
+  - React Router 7
+  - Zustand (State Management)
+  - Ant Design 6 + Tailwind CSS 4
+- **Tooling**:
+  - Biome (Linting & Formatting)
+  - Vitest (Unit Testing)
+  - TypeScript
 
-## Testing Guidelines
-A Vitest + React Testing Library stack is expected (install via `pnpm add -D vitest @testing-library/react` if the packages are missing). Place spec files next to their modules (`NovaUserMenu.test.tsx`) or under `src/__tests__`. Mock APIs through helpers in `src/mock/`. Target at least 80% statement coverage per module by running `vitest run --coverage` and attach the summary to your PR description.
+## Directory Structure Map
 
-## Commit & Pull Request Guidelines
-Follow the conventional, scope-aware messages used in the existing log (`feat(layout): ...`, `chore: ...`). Keep PRs small and include: a concise summary, linked issue or task ID, screenshots or GIFs for UI changes, and a checklist covering `pnpm lint`, `pnpm build`, and relevant tests. Flag any config or environment changes in the description so reviewers can reproduce locally.
+### Applications (`apps/`)
+- `web-antd`: The destination for the main admin application (currently empty/WIP).
+- `backend`: Backend/Mock service (likely Nitro-based).
 
-## Security & Configuration Tips
-Secrets must remain outside the repo; load them through `.env.local` (gitignored) and consume via `import.meta.env`. Double-check additions under `src/config/modules` for accidental leakage, and avoid embedding tenant-specific URLs directly inside router modules.
+### Shared Packages (`packages/`)
+Core business logic and UI libraries are modularized here:
+
+- **@core/**: Foundational packages.
+  - `base`: Design system tokens, shared constants.
+  - `hooks`: Common React hooks.
+  - `preferences`: Settings and user preference management.
+  - `ui-kit`: Generic, reusable UI components.
+- **effects/**: Side-effects and business flows.
+- **icons/**: Icon sets and components.
+- **types/**: Shared TypeScript definitions/interfaces.
+- **utils/**: General utility functions (helpers, formatters).
+
+### Configuration (`internal/`)
+Contains shared configuration for build tools (Vite, Tailwind, etc.).
+
+## Key Commands
+- `pnpm dev`: Start the dev server (check `package.json` for specific app filters).
+- `pnpm build`: Build all apps/packages via Turbo.
+- `pnpm lint` / `pnpm format`: Code quality checks via Biome.
+- `pnpm check:type`: Type checking.
+
+## Guidelines for AI Agents
+1. **Migration Awareness**: Be aware that files in root `src` might have counterparts or dependencies in `packages`.
+2. **Style Guide**: Follow `biome.json` rules. Use Tailwind CSS for styling where possible.
+3. **Imports**: Use absolute imports or workspace aliases where configured.

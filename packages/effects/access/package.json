@@ -1,0 +1,29 @@
+{
+  "name": "@nova/access",
+  "version": "5.5.9",
+  "homepage": "https://github.com/vbenjs/vue-nova-admin",
+  "bugs": "https://github.com/vbenjs/vue-nova-admin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vbenjs/vue-nova-admin.git",
+    "directory": "packages/effects/permissions"
+  },
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@nova/preferences": "workspace:*",
+    "@nova/stores": "workspace:*",
+    "@nova/types": "workspace:*",
+    "@nova/utils": "workspace:*",
+    "vue": "catalog:"
+  }
+}

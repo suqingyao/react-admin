@@ -1,0 +1,47 @@
+{
+  "name": "@nova-core/hooks",
+  "version": "0.0.1",
+  "homepage": "https://github.com/nova-js/admin",
+  "bugs": "https://github.com/nova-js/admin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nova-js/admin.git",
+    "directory": "packages/@core/hooks"
+  },
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm unbuild"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "development": "./src/index.ts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "dependencies": {
+    "@nova-core/shared": "workspace:*",
+    "@vueuse/core": "catalog:",
+    "reka-ui": "catalog:",
+    "sortablejs": "catalog:",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@types/sortablejs": "catalog:"
+  }
+}

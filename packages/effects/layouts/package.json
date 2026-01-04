@@ -1,0 +1,43 @@
+{
+  "name": "@nova/layouts",
+  "version": "5.5.9",
+  "homepage": "https://github.com/vbenjs/vue-nova-admin",
+  "bugs": "https://github.com/vbenjs/vue-nova-admin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vbenjs/vue-nova-admin.git",
+    "directory": "packages/effects/layouts"
+  },
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@nova-core/composables": "workspace:*",
+    "@nova-core/form-ui": "workspace:*",
+    "@nova-core/layout-ui": "workspace:*",
+    "@nova-core/menu-ui": "workspace:*",
+    "@nova-core/popup-ui": "workspace:*",
+    "@nova-core/shadcn-ui": "workspace:*",
+    "@nova-core/shared": "workspace:*",
+    "@nova-core/tabs-ui": "workspace:*",
+    "@nova/constants": "workspace:*",
+    "@nova/hooks": "workspace:*",
+    "@nova/icons": "workspace:*",
+    "@nova/locales": "workspace:*",
+    "@nova/preferences": "workspace:*",
+    "@nova/stores": "workspace:*",
+    "@nova/types": "workspace:*",
+    "@nova/utils": "workspace:*",
+    "@vueuse/core": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  }
+}

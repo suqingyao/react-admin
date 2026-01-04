@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@nova-core/tsconfig/library.json",
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

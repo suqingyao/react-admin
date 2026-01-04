@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@nova/tsconfig/web.json",
+  "compilerOptions": {
+    "types": ["vite/client", "@nova/types/global"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

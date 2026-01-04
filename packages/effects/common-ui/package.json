@@ -1,0 +1,54 @@
+{
+  "name": "@nova/common-ui",
+  "version": "5.5.9",
+  "homepage": "https://github.com/vbenjs/vue-nova-admin",
+  "bugs": "https://github.com/vbenjs/vue-nova-admin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vbenjs/vue-nova-admin.git",
+    "directory": "packages/effects/common-ui"
+  },
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./es/tippy": {
+      "types": "./src/components/tippy/index.ts",
+      "default": "./src/components/tippy/index.ts"
+    },
+    "./es/loading": {
+      "types": "./src/components/loading/index.ts",
+      "default": "./src/components/loading/index.ts"
+    }
+  },
+  "dependencies": {
+    "@nova-core/form-ui": "workspace:*",
+    "@nova-core/popup-ui": "workspace:*",
+    "@nova-core/preferences": "workspace:*",
+    "@nova-core/shadcn-ui": "workspace:*",
+    "@nova-core/shared": "workspace:*",
+    "@nova/constants": "workspace:*",
+    "@nova/hooks": "workspace:*",
+    "@nova/icons": "workspace:*",
+    "@nova/locales": "workspace:*",
+    "@nova/types": "workspace:*",
+    "@vueuse/core": "catalog:",
+    "@vueuse/integrations": "catalog:",
+    "json-bigint": "catalog:",
+    "qrcode": "catalog:",
+    "tippy.js": "catalog:",
+    "vue": "catalog:",
+    "vue-json-viewer": "catalog:",
+    "vue-router": "catalog:",
+    "vue-tippy": "catalog:"
+  },
+  "devDependencies": {
+    "@types/qrcode": "catalog:"
+  }
+}
