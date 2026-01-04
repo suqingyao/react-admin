@@ -1,0 +1,27 @@
+{
+  "name": "@nova/types",
+  "version": "0.0.1",
+  "homepage": "https://github.com/nova-js/admin",
+  "bugs": "https://github.com/nova-js/admin/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nova-js/admin.git",
+    "directory": "packages/types"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./global": {
+      "types": "./global.d.ts"
+    }
+  },
+  "dependencies": {
+    "@nova-core/typings": "workspace:*",
+    "react": "catalog:",
+    "react-router": "catalog:"
+  }
+}
