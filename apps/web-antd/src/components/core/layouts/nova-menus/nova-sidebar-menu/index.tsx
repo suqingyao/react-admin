@@ -1,34 +1,38 @@
 import { cn } from '@suqingyao/utils';
-import type { MenuProps } from 'antd';
-import { Menu, Tooltip } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { Tooltip } from 'antd';
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import type { RouteObject } from 'react-router';
 import { matchRoutes, useLocation, useNavigate } from 'react-router';
 import { NovaLogo } from '@/components/core/base/nova-logo';
 import { NovaSvgIcon } from '@/components/core/base/nova-svg-icon';
 import { NovaIconButton } from '@/components/core/widget/nova-icon-button';
+import { Menu, MenuItem, SubMenu } from '@/components/ui/menu';
 import AppConfig from '@/config';
-import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum';
+import { MenuThemeEnum, MenuTypeEnum } from '@/enums/appEnum';
 import { useCommon } from '@/hooks/core/useCommon';
 import { useTimeoutFn, useWindowSize } from '@/hooks/shared';
 import { handleMenuJump } from '@/lib/navigation/jump';
+import { formatMenuTitle } from '@/lib/router';
 import { routes } from '@/router/routes';
 import { useMenuStore, useSettingStore } from '@/store';
 import type { AppRouteRecord } from '@/types/router';
 import './style.scss';
 
-type MenuItem = Required<MenuProps>['items'][number];
-
 const MOBILE_BREAKPOINT = 800;
 const ANIMATION_DELAY = 350;
-const MENU_CLOSE_WIDTH = MenuWidth.CLOSE;
-
 export function NovaSidebarMenu() {
   const showLeftMenu = true;
   const location = useLocation();
   const navigate = useNavigate();
-  const { menuType, dualMenuShowText, getMenuTheme, setDualMenuShowText, menuOpen, setMenuOpen } =
-    useSettingStore();
+  const {
+    menuType,
+    dualMenuShowText,
+    getMenuTheme,
+    setDualMenuShowText,
+    menuOpen,
+    setMenuOpen,
+    uniqueOpened,
+  } = useSettingStore();
   const { menuList } = useMenuStore();
   const [showMobileModal, setShowMobileModal] = useState(false);
 
@@ -56,6 +60,10 @@ export function NovaSidebarMenu() {
   const isMobileScreen = useMemo(() => width < MOBILE_BREAKPOINT, [width]);
 
   const isDualMenu = menuType === MenuTypeEnum.DUAL_MENU;
+
+  const menuTheme = getMenuTheme();
+  const menuThemeMode: 'dark' | 'light' | 'auto' =
+    menuTheme.theme === MenuThemeEnum.DARK ? 'dark' : 'light';
 
   const navigateToHome = () => {
     navigate(homePath);
@@ -97,31 +105,92 @@ export function NovaSidebarMenu() {
     } as React.CSSProperties;
   }, [isDualMenu, menuOpen]);
 
-  const getMenuItems = (list: AppRouteRecord[]): MenuItem[] => {
-    return list
-      .filter((item) => !item.meta?.isHide)
-      .map((item) => {
-        const menuItem: MenuItem = {
-          key: item.path || item.id || '',
-          icon: item.meta?.icon ? <NovaSvgIcon icon={item.meta.icon} className="size-4" /> : null,
-          label: (
-            <div className="flex items-center justify-between">
-              <span>{item.meta.title}</span>
-              {item.meta.showBadge && <span className="ml-2 size-2 rounded-full bg-red-500" />}
-            </div>
-          ),
-          onClick: () => {
-            handleMenuJump(item);
-            handleMenuClose();
-          },
-          children:
-            item.children && item.children.length > 0 ? getMenuItems(item.children) : undefined,
-        };
-        return menuItem;
-      });
-  };
+  const renderMenuTitle = useCallback((item: AppRouteRecord, withBadge = false) => {
+    const { title, showBadge, showTextBadge } = item.meta;
 
-  const menuItems = useMemo(() => getMenuItems(menuList), [menuList, getMenuItems]);
+    return (
+      <div className="flex items-center justify-between w-full">
+        <span className="truncate">{formatMenuTitle(title)}</span>
+        {withBadge && (
+          <>
+            {showTextBadge && (
+              <span className="ml-2 inline-flex min-w-[20px] justify-center rounded-xl bg-red-500 px-1.5 text-[10px] leading-[14px] text-white">
+                {showTextBadge}
+              </span>
+            )}
+            {!showTextBadge && showBadge && (
+              <span className="ml-2 size-2 rounded-full bg-red-500" />
+            )}
+          </>
+        )}
+      </div>
+    );
+  }, []);
+
+  const menuRecordMap = useMemo(() => {
+    const map = new Map<string, AppRouteRecord>();
+    const travel = (list: AppRouteRecord[]) => {
+      list.forEach((item) => {
+        const key = item.path || item.id || '';
+        if (key) {
+          map.set(key, item);
+        }
+        if (item.children?.length) {
+          travel(item.children);
+        }
+      });
+    };
+    travel(menuList);
+    return map;
+  }, [menuList]);
+
+  const buildMenuNodes = useCallback(
+    (list: AppRouteRecord[]): ReactNode[] =>
+      list
+        .filter((item) => !item.meta?.isHide)
+        .map((item) => {
+          const path = item.path || item.id || '';
+          if (!path) {
+            return null;
+          }
+
+          const hasChildren = item.children && item.children.length > 0;
+          const badgeText = item.meta?.showTextBadge;
+          const badgeType: 'normal' | 'dot' | undefined = badgeText
+            ? 'normal'
+            : item.meta?.showBadge
+              ? 'dot'
+              : undefined;
+          const badgeVariants = badgeType ? 'destructive' : undefined;
+
+          const commonProps = {
+            path,
+            icon: item.meta?.icon,
+            badge: badgeText,
+            badgeType,
+            badgeVariants,
+          };
+
+          if (hasChildren) {
+            return (
+              <SubMenu key={path} {...commonProps}>
+                {renderMenuTitle(item, true)}
+                {buildMenuNodes(item.children!)}
+              </SubMenu>
+            );
+          }
+
+          return (
+            <MenuItem key={path} {...commonProps}>
+              {renderMenuTitle(item)}
+            </MenuItem>
+          );
+        })
+        .filter(Boolean) as ReactNode[],
+    [renderMenuTitle],
+  );
+
+  const menuNodes = useMemo(() => buildMenuNodes(menuList), [buildMenuNodes, menuList]);
 
   /**
    * 处理菜单关闭（来自子组件）
@@ -133,10 +202,19 @@ export function NovaSidebarMenu() {
     }
   };
 
+  const handleMenuSelect = (path: string): void => {
+    const target = path ? menuRecordMap.get(path) : undefined;
+    if (target) {
+      handleMenuJump(target);
+      handleMenuClose();
+    }
+  };
+
   useEffect(() => {
     if (width < MOBILE_BREAKPOINT) {
-      setMenuOpen(false);
-      if (!menuOpen) {
+      if (menuOpen) {
+        setMenuOpen(false);
+      } else {
         setShowMobileModal(false);
       }
     } else {
@@ -167,13 +245,13 @@ export function NovaSidebarMenu() {
           className="dual-menu-left"
           style={{
             width: dualMenuShowText ? '60px' : '46px',
-            background: getMenuTheme().background,
+            background: menuTheme.background,
           }}>
           <NovaLogo className="logo" onClick={navigateToHome} />
           <ul className="h-[calc(100%-135px)] overflow-auto">
             {firstLevelMenus.map((menu) => (
               <li key={menu.path} onClick={() => handleMenuJump(menu)}>
-                <Tooltip title={menu.meta.title}>
+                <Tooltip title={formatMenuTitle(String(menu.meta.title))}>
                   <div
                     className={cn({
                       'is-active': menu.meta.isFirstLevel
@@ -189,7 +267,9 @@ export function NovaSidebarMenu() {
                       style={{ marginBottom: dualMenuShowText ? '5px' : '0' }}
                     />
                     {dualMenuShowText && (
-                      <span className="text-sm text-gray-700">{menu.meta.title}</span>
+                      <span className="text-sm text-gray-700">
+                        {formatMenuTitle(String(menu.meta.title))}
+                      </span>
                     )}
                     {menu.meta.showBadge && <div className="nova-badge nova-badge-dual" />}
                   </div>
@@ -208,32 +288,33 @@ export function NovaSidebarMenu() {
         <div
           className={cn(
             'menu-left',
-            `menu-left-${getMenuTheme().theme}`,
+            `menu-left-${menuTheme.theme}`,
             `menu-left-${!menuOpen ? 'closed' : 'open'}`,
           )}>
           <div style={scrollbarStyle}>
             <div
               className="header"
               onClick={navigateToHome}
-              style={{ background: getMenuTheme().background }}>
+              style={{ background: menuTheme.background }}>
               {!isDualMenu && <NovaLogo className="logo" />}
               <p
                 className={cn({ 'is-dual-menu-name': isDualMenu })}
                 style={{
-                  color: getMenuTheme().systemNameColor,
+                  color: menuTheme.systemNameColor,
                   opacity: !menuOpen ? 0 : 1,
                 }}>
                 {AppConfig.systemInfo.name}
               </p>
-              <Menu
-                theme="light"
-                mode="vertical"
-                inlineCollapsed={!menuOpen}
-                color={getMenuTheme().textColor}
-                items={menuItems}
-                selectedKeys={[routerPath]}
-              />
             </div>
+            <Menu
+              accordion={uniqueOpened}
+              collapse={!menuOpen}
+              defaultActive={routerPath}
+              mode="vertical"
+              onSelect={(path) => handleMenuSelect(path)}
+              theme={menuThemeMode}>
+              {menuNodes}
+            </Menu>
           </div>
 
           {isDualMenu && (

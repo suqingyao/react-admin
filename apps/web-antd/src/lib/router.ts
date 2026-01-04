@@ -48,6 +48,7 @@ export const formatMenuTitle = (title: string): string => {
   }
 
   const translated = $t(title);
+  console.log('🚀 ~ formatMenuTitle ~ translated:', translated, title);
   if (translated) {
     return translated;
   }

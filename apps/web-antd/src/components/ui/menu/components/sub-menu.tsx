@@ -1,5 +1,13 @@
-import type { FocusEvent, MouseEvent, ReactNode } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Children,
+  type FocusEvent,
+  type MouseEvent,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useNamespace } from '@/hooks/ui/useNamespace';
 import { useMenu, useMenuStyle } from '../hooks/useMenu';
 import {
@@ -40,7 +48,7 @@ export function SubMenu(props: SubMenuComponentProps) {
     level: pathContext.level + 1,
     mouseInChild: { current: false } as unknown as MenuProvider['items'],
     removeSubMenu: () => {},
-  } as any);
+  });
 
   /** mouseInChild - 鼠标是否在子级中 / whether mouse is inside child menus */
   const [mouseInChild, setMouseInChild] = useState(false);
@@ -50,6 +58,13 @@ export function SubMenu(props: SubMenuComponentProps) {
   const subMenusRef = useRef<MenuProvider['subMenus']>({});
   /** timerRef - 悬停展开/关闭的定时器 / timer for hover open/close */
   const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
+
+  const childrenArray = useMemo(() => Children.toArray(props.children), [props.children]);
+  const titleNode = childrenArray[0] ?? null;
+  const submenuChildren = useMemo(
+    () => (childrenArray.length > 1 ? childrenArray.slice(1) : []),
+    [childrenArray],
+  );
 
   /** useMenuResult - 使用 useMenu 计算父级路径链路 / use useMenu to compute parent paths */
   const { parentPaths } = useMenu({
@@ -199,7 +214,7 @@ export function SubMenu(props: SubMenuComponentProps) {
     return () => {
       rootMenu.removeSubMenu(item);
     };
-  }, [item, rootMenu]);
+  }, [item, rootMenu.addSubMenu, rootMenu.removeSubMenu]);
 
   /** liClassName - 子菜单根元素类名 / class name of submenu root element */
   const liClassName = useMemo(
@@ -215,6 +230,11 @@ export function SubMenu(props: SubMenuComponentProps) {
     [active, menuNamespace, opened, props.disabled],
   );
 
+  const shouldRenderChildren = useMemo(
+    () => !rootMenu.isMenuPopup || opened,
+    [opened, rootMenu.isMenuPopup],
+  );
+
   return (
     <li
       className={liClassName}
@@ -226,15 +246,20 @@ export function SubMenu(props: SubMenuComponentProps) {
         isMenuMore={props.isSubMenuMore}
         isTopLevelMenuSubmenu={isFirstLevel}
         level={currentLevel}
-        path={props.path}>
-        {props.children}
-      </SubMenuContent>
-      {!rootMenu.isMenuPopup && (
+        path={props.path}
+        title={titleNode}></SubMenuContent>
+      {shouldRenderChildren && (
         <ul
-          className={[nsMenu.b(), menuNamespace.is('rounded', rounded)].filter(Boolean).join(' ')}
+          className={[
+            nsMenu.b(),
+            menuNamespace.is('rounded', rounded),
+            menuNamespace.is('popup', rootMenu.isMenuPopup),
+          ]
+            .filter(Boolean)
+            .join(' ')}
           style={subMenuStyle as any}>
           <SubMenuPathProvider level={currentLevel} parentPaths={parentPaths}>
-            {opened && props.children}
+            {opened && submenuChildren}
           </SubMenuPathProvider>
         </ul>
       )}

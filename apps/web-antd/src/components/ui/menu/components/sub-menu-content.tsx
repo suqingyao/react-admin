@@ -12,6 +12,8 @@ import type { MenuItemProps } from '../types';
 interface SubMenuContentProps extends MenuItemProps {
   /** children - 主内容插槽 / main content slot */
   children?: ReactNode;
+  /** title - 显示的标题内容（优先于 children） / display title content, takes precedence over children */
+  title?: ReactNode;
   /** isMenuMore - 是否为“更多”菜单 / whether submenu is used for "more" menu */
   isMenuMore?: boolean;
   /** isTopLevelMenuSubmenu - 是否为一级子菜单 / whether submenu is top level */
@@ -80,7 +82,7 @@ export function SubMenuContent(props: SubMenuContentProps) {
       ]
         .filter(Boolean)
         .join(' ')}>
-      {props.children}
+      {props.title ?? props.children}
 
       {!props.isMenuMore && props.icon && (
         <NovaSvgIcon
@@ -89,7 +91,9 @@ export function SubMenuContent(props: SubMenuContentProps) {
         />
       )}
 
-      {!hiddenTitle && <div className={nsSubMenuContent.e('title')}>{props.children}</div>}
+      {!hiddenTitle && (
+        <div className={nsSubMenuContent.e('title')}>{props.title ?? props.children}</div>
+      )}
 
       {!props.isMenuMore && showArrowIcon && (
         <span className={nsSubMenuContent.e('icon-arrow')} style={iconArrowStyle}>

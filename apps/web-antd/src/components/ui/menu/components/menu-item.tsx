@@ -96,7 +96,7 @@ export function MenuItem(props: MenuItemComponentProps) {
     return () => {
       rootMenu.removeMenuItem(item);
     };
-  }, [item, rootMenu]);
+  }, [item, rootMenu.addMenuItem, rootMenu.removeMenuItem]);
 
   /** itemClassName - 菜单项根元素类名 / class name of menu item root element */
   const itemClassName = useMemo(

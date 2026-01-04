@@ -95,7 +95,7 @@
       height: 100dvh;
     }
 
-    // .el-menu {
+    // .nova-menu {
     //   height: 100%;
     // }
 
@@ -168,7 +168,7 @@
     }
   }
 
-  .el-menu {
+  .nova-menu {
     box-sizing: border-box;
     height: calc(100vh - 60px);
     overflow-y: auto;
@@ -197,11 +197,11 @@
       line-height: 50px;
     }
 
-    .el-menu {
+    .nova-menu {
       height: calc(100vh - 60px);
     }
 
-    .el-menu--collapse {
+    .nova-menu.is-collapse {
       width: 0;
     }
 
