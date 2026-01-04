@@ -1,4 +1,4 @@
-import { acceptHMRUpdate, defineStore } from 'pinia';
+import { create } from 'zustand';
 
 interface BasicUserInfo {
   [key: string]: any;
@@ -24,7 +24,7 @@ interface BasicUserInfo {
   username: string;
 }
 
-interface AccessState {
+interface UserState {
   /**
    * 用户信息
    */
@@ -33,32 +33,23 @@ interface AccessState {
    * 用户角色
    */
   userRoles: string[];
+  /**
+   * Actions
+   */
+  setUserInfo: (userInfo: BasicUserInfo | null) => void;
+  setUserRoles: (roles: string[]) => void;
 }
 
 /**
  * @zh_CN 用户信息相关
  */
-export const useUserStore = defineStore('core-user', {
-  actions: {
-    setUserInfo(userInfo: BasicUserInfo | null) {
-      // 设置用户信息
-      this.userInfo = userInfo;
-      // 设置角色信息
-      const roles = userInfo?.roles ?? [];
-      this.setUserRoles(roles);
-    },
-    setUserRoles(roles: string[]) {
-      this.userRoles = roles;
-    },
+export const useUserStore = create<UserState>((set) => ({
+  userInfo: null,
+  userRoles: [],
+  setUserInfo: (userInfo) => {
+    // 设置角色信息
+    const roles = userInfo?.roles ?? [];
+    set({ userInfo, userRoles: roles });
   },
-  state: (): AccessState => ({
-    userInfo: null,
-    userRoles: [],
-  }),
-});
-
-// 解决热更新问题
-const hot = import.meta.hot;
-if (hot) {
-  hot.accept(acceptHMRUpdate(useUserStore, hot));
-}
+  setUserRoles: (roles) => set({ userRoles: roles }),
+}));

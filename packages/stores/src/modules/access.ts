@@ -1,129 +1,111 @@
-import type { RouteRecordRaw } from 'vue-router';
+import type { MenuRecordRaw } from '@nova-core/typings';
 
-import type { MenuRecordRaw } from '@vben-core/typings';
+// Replaced vue-router with any for now, as react-router types might need specific integration
+// import type { RouteRecordRaw } from 'vue-router';
+// Using any for routes to avoid breaking changes until full router migration
+type RouteRecordRaw = any;
 
-import { acceptHMRUpdate, defineStore } from 'pinia';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { createSecureStorage } from '../setup';
 
 type AccessToken = null | string;
 
 interface AccessState {
-  /**
-   * 权限码
-   */
   accessCodes: string[];
-  /**
-   * 可访问的菜单列表
-   */
   accessMenus: MenuRecordRaw[];
-  /**
-   * 可访问的路由列表
-   */
   accessRoutes: RouteRecordRaw[];
-  /**
-   * 登录 accessToken
-   */
   accessToken: AccessToken;
-  /**
-   * 是否已经检查过权限
-   */
   isAccessChecked: boolean;
-  /**
-   * 是否锁屏状态
-   */
   isLockScreen: boolean;
-  /**
-   * 锁屏密码
-   */
   lockScreenPassword?: string;
-  /**
-   * 登录是否过期
-   */
   loginExpired: boolean;
-  /**
-   * 登录 accessToken
-   */
   refreshToken: AccessToken;
+
+  // Actions
+  getMenuByPath: (path: string) => MenuRecordRaw | undefined;
+  lockScreen: (password: string) => void;
+  setAccessCodes: (codes: string[]) => void;
+  setAccessMenus: (menus: MenuRecordRaw[]) => void;
+  setAccessRoutes: (routes: RouteRecordRaw[]) => void;
+  setAccessToken: (token: AccessToken) => void;
+  setIsAccessChecked: (isAccessChecked: boolean) => void;
+  setLoginExpired: (loginExpired: boolean) => void;
+  setRefreshToken: (token: AccessToken) => void;
+  unlockScreen: () => void;
 }
 
 /**
  * @zh_CN 访问权限相关
  */
-export const useAccessStore = defineStore('core-access', {
-  actions: {
-    getMenuByPath(path: string) {
-      function findMenu(
-        menus: MenuRecordRaw[],
-        path: string,
-      ): MenuRecordRaw | undefined {
-        for (const menu of menus) {
-          if (menu.path === path) {
-            return menu;
-          }
-          if (menu.children) {
-            const matched = findMenu(menu.children, path);
-            if (matched) {
-              return matched;
+export const useAccessStore = create<AccessState>()(
+  persist(
+    (set, get) => ({
+      accessCodes: [],
+      accessMenus: [],
+      accessRoutes: [],
+      accessToken: null,
+      isAccessChecked: false,
+      isLockScreen: false,
+      lockScreenPassword: undefined,
+      loginExpired: false,
+      refreshToken: null,
+
+      getMenuByPath: (path: string) => {
+        const { accessMenus } = get();
+        function findMenu(menus: MenuRecordRaw[], path: string): MenuRecordRaw | undefined {
+          for (const menu of menus) {
+            if (menu.path === path) {
+              return menu;
+            }
+            if (menu.children) {
+              const matched = findMenu(menu.children, path);
+              if (matched) {
+                return matched;
+              }
             }
           }
         }
-      }
-      return findMenu(this.accessMenus, path);
+        return findMenu(accessMenus, path);
+      },
+      lockScreen: (password: string) => {
+        set({ isLockScreen: true, lockScreenPassword: password });
+      },
+      setAccessCodes: (codes: string[]) => {
+        set({ accessCodes: codes });
+      },
+      setAccessMenus: (menus: MenuRecordRaw[]) => {
+        set({ accessMenus: menus });
+      },
+      setAccessRoutes: (routes: RouteRecordRaw[]) => {
+        set({ accessRoutes: routes });
+      },
+      setAccessToken: (token: AccessToken) => {
+        set({ accessToken: token });
+      },
+      setIsAccessChecked: (isAccessChecked: boolean) => {
+        set({ isAccessChecked });
+      },
+      setLoginExpired: (loginExpired: boolean) => {
+        set({ loginExpired });
+      },
+      setRefreshToken: (token: AccessToken) => {
+        set({ refreshToken: token });
+      },
+      unlockScreen: () => {
+        set({ isLockScreen: false, lockScreenPassword: undefined });
+      },
+    }),
+    {
+      name: 'core-access',
+      storage: createJSONStorage(() => createSecureStorage('nova')),
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        accessCodes: state.accessCodes,
+        isLockScreen: state.isLockScreen,
+        lockScreenPassword: state.lockScreenPassword,
+      }),
     },
-    lockScreen(password: string) {
-      this.isLockScreen = true;
-      this.lockScreenPassword = password;
-    },
-    setAccessCodes(codes: string[]) {
-      this.accessCodes = codes;
-    },
-    setAccessMenus(menus: MenuRecordRaw[]) {
-      this.accessMenus = menus;
-    },
-    setAccessRoutes(routes: RouteRecordRaw[]) {
-      this.accessRoutes = routes;
-    },
-    setAccessToken(token: AccessToken) {
-      this.accessToken = token;
-    },
-    setIsAccessChecked(isAccessChecked: boolean) {
-      this.isAccessChecked = isAccessChecked;
-    },
-    setLoginExpired(loginExpired: boolean) {
-      this.loginExpired = loginExpired;
-    },
-    setRefreshToken(token: AccessToken) {
-      this.refreshToken = token;
-    },
-    unlockScreen() {
-      this.isLockScreen = false;
-      this.lockScreenPassword = undefined;
-    },
-  },
-  persist: {
-    // 持久化
-    pick: [
-      'accessToken',
-      'refreshToken',
-      'accessCodes',
-      'isLockScreen',
-      'lockScreenPassword',
-    ],
-  },
-  state: (): AccessState => ({
-    accessCodes: [],
-    accessMenus: [],
-    accessRoutes: [],
-    accessToken: null,
-    isAccessChecked: false,
-    isLockScreen: false,
-    lockScreenPassword: undefined,
-    loginExpired: false,
-    refreshToken: null,
-  }),
-});
-
-// 解决热更新问题
-const hot = import.meta.hot;
-if (hot) {
-  hot.accept(acceptHMRUpdate(useAccessStore, hot));
-}
+  ),
+);

@@ -1,12 +1,8 @@
-import { ref, unref } from 'vue';
-
-import { DEFAULT_TIME_ZONE_OPTIONS } from '@vben-core/preferences';
-import {
-  getCurrentTimezone,
-  setCurrentTimezone,
-} from '@vben-core/shared/utils';
-
-import { acceptHMRUpdate, defineStore } from 'pinia';
+import { DEFAULT_TIME_ZONE_OPTIONS } from '@nova-core/preferences';
+import { getCurrentTimezone, setCurrentTimezone } from '@nova-core/shared/utils';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { createSecureStorage } from '../setup';
 
 interface TimezoneHandler {
   getTimezone?: () => Promise<null | string | undefined>;
@@ -19,10 +15,6 @@ interface TimezoneHandler {
   setTimezone?: (timezone: string) => Promise<void>;
 }
 
-/**
- * 默认时区处理模块
- * 时区存储基于pinia存储插件
- */
 const getDefaultTimezoneHandler = (): TimezoneHandler => {
   return {
     getTimezoneOptions: () => {
@@ -38,17 +30,12 @@ const getDefaultTimezoneHandler = (): TimezoneHandler => {
   };
 };
 
-/**
- * 自定义时区处理模块
- */
 let customTimezoneHandler: null | Partial<TimezoneHandler> = null;
+
 const setTimezoneHandler = (handler: Partial<TimezoneHandler>) => {
   customTimezoneHandler = handler;
 };
 
-/**
- * 获取时区处理模块
- */
 const getTimezoneHandler = () => {
   return {
     ...getDefaultTimezoneHandler(),
@@ -56,77 +43,52 @@ const getTimezoneHandler = () => {
   };
 };
 
-/**
- * timezone支持模块
- */
-const useTimezoneStore = defineStore(
-  'core-timezone',
-  () => {
-    const timezoneRef = ref(getCurrentTimezone());
+interface TimezoneState {
+  timezone: string;
+  setTimezone: (timezone: string) => Promise<void>;
+  getTimezoneOptions: () => Promise<{ label: string; value: string }[]>;
+  initTimezone: () => Promise<void>;
+}
 
-    /**
-     * 初始化时区
-     * Initialize the timezone
-     */
-    async function initTimezone() {
-      const timezoneHandler = getTimezoneHandler();
-      const timezone = await timezoneHandler.getTimezone?.();
-      if (timezone) {
-        timezoneRef.value = timezone;
-      }
-      // 设置dayjs默认时区
-      setCurrentTimezone(unref(timezoneRef));
-    }
+export const useTimezoneStore = create<TimezoneState>()(
+  persist(
+    (set, get) => ({
+      timezone: getCurrentTimezone(),
 
-    /**
-     * 设置时区
-     * Set the timezone
-     * @param timezone 时区字符串
-     */
-    async function setTimezone(timezone: string) {
-      const timezoneHandler = getTimezoneHandler();
-      await timezoneHandler.setTimezone?.(timezone);
-      timezoneRef.value = timezone;
-      // 设置dayjs默认时区
-      setCurrentTimezone(timezone);
-    }
+      initTimezone: async () => {
+        try {
+          const timezoneHandler = getTimezoneHandler();
+          const timezone = await timezoneHandler.getTimezone?.();
+          if (timezone) {
+            set({ timezone });
+          }
+          setCurrentTimezone(get().timezone);
+        } catch (error) {
+          console.error('Failed to initialize timezone:', error);
+        }
+      },
 
-    /**
-     * 获取时区选项
-     * Get the timezone options
-     */
-    async function getTimezoneOptions() {
-      const timezoneHandler = getTimezoneHandler();
-      return (await timezoneHandler.getTimezoneOptions?.()) || [];
-    }
+      setTimezone: async (timezone: string) => {
+        const timezoneHandler = getTimezoneHandler();
+        await timezoneHandler.setTimezone?.(timezone);
+        set({ timezone });
+        setCurrentTimezone(timezone);
+      },
 
-    initTimezone().catch((error) => {
-      console.error('Failed to initialize timezone during store setup:', error);
-    });
-
-    function $reset() {
-      timezoneRef.value = getCurrentTimezone();
-    }
-
-    return {
-      timezone: timezoneRef,
-      setTimezone,
-      getTimezoneOptions,
-      $reset,
-    };
-  },
-  {
-    persist: {
-      // 持久化
-      pick: ['timezone'],
+      getTimezoneOptions: async () => {
+        const timezoneHandler = getTimezoneHandler();
+        return (await timezoneHandler.getTimezoneOptions?.()) || [];
+      },
+    }),
+    {
+      name: 'core-timezone',
+      storage: createJSONStorage(() => createSecureStorage('nova')),
+      partialize: (state) => ({ timezone: state.timezone }),
     },
-  },
+  ),
 );
 
-export { setTimezoneHandler, useTimezoneStore };
+// Initialize on load if possible, or let consumer call it
+// useTimezoneStore.getState().initTimezone();
 
-// 解决热更新问题
-const hot = import.meta.hot;
-if (hot) {
-  hot.accept(acceptHMRUpdate(useTimezoneStore, hot));
-}
+export { setTimezoneHandler };

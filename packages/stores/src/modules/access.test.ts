@@ -1,46 +1,46 @@
-import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
-
 import { useAccessStore } from './access';
 
 describe('useAccessStore', () => {
   beforeEach(() => {
-    setActivePinia(createPinia());
+    useAccessStore.setState({
+      accessMenus: [],
+      accessToken: null,
+      accessRoutes: [],
+      accessCodes: [],
+      isAccessChecked: false,
+      isLockScreen: false,
+      loginExpired: false,
+      refreshToken: null,
+    });
   });
 
   it('updates accessMenus state', () => {
-    const store = useAccessStore();
-    expect(store.accessMenus).toEqual([]);
-    store.setAccessMenus([{ name: 'Dashboard', path: '/dashboard' }]);
-    expect(store.accessMenus).toEqual([
+    expect(useAccessStore.getState().accessMenus).toEqual([]);
+    useAccessStore.getState().setAccessMenus([{ name: 'Dashboard', path: '/dashboard' }]);
+    expect(useAccessStore.getState().accessMenus).toEqual([
       { name: 'Dashboard', path: '/dashboard' },
     ]);
   });
 
   it('updates accessToken state correctly', () => {
-    const store = useAccessStore();
-    expect(store.accessToken).toBeNull(); // 初始状态
-    store.setAccessToken('abc123');
-    expect(store.accessToken).toBe('abc123');
+    expect(useAccessStore.getState().accessToken).toBeNull();
+    useAccessStore.getState().setAccessToken('abc123');
+    expect(useAccessStore.getState().accessToken).toBe('abc123');
   });
 
   it('returns the correct accessToken', () => {
-    const store = useAccessStore();
-    store.setAccessToken('xyz789');
-    expect(store.accessToken).toBe('xyz789');
+    useAccessStore.getState().setAccessToken('xyz789');
+    expect(useAccessStore.getState().accessToken).toBe('xyz789');
   });
 
-  // 测试设置空的访问菜单列表
   it('handles empty accessMenus correctly', () => {
-    const store = useAccessStore();
-    store.setAccessMenus([]);
-    expect(store.accessMenus).toEqual([]);
+    useAccessStore.getState().setAccessMenus([]);
+    expect(useAccessStore.getState().accessMenus).toEqual([]);
   });
 
-  // 测试设置空的访问路由列表
   it('handles empty accessRoutes correctly', () => {
-    const store = useAccessStore();
-    store.setAccessRoutes([]);
-    expect(store.accessRoutes).toEqual([]);
+    useAccessStore.getState().setAccessRoutes([]);
+    expect(useAccessStore.getState().accessRoutes).toEqual([]);
   });
 });
