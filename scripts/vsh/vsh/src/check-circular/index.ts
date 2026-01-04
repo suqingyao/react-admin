@@ -1,8 +1,6 @@
-import type { CAC } from 'cac';
-
 import { extname } from 'node:path';
-
-import { getStagedFiles } from '@vben/node-utils';
+import { getStagedFiles } from '@nova/node-utils';
+import type { CAC } from 'cac';
 
 import { circularDepsDetect } from 'circular-dependency-scanner';
 
@@ -66,11 +64,7 @@ function formatCircles(circles: CircularDependencyResult[]): void {
  * @param options.config - 自定义配置
  * @returns Promise<void>
  */
-async function checkCircular({
-  config = {},
-  staged,
-  verbose,
-}: CommandOptions): Promise<void> {
+async function checkCircular({ config = {}, staged, verbose }: CommandOptions): Promise<void> {
   try {
     // 合并配置
     const finalConfig = {
@@ -127,9 +121,7 @@ async function checkCircular({
 
     // 如果发现循环依赖，只输出警告信息
     if (results.length > 0) {
-      console.log(
-        '\n⚠️ Warning: Circular dependencies found, please check and fix',
-      );
+      console.log('\n⚠️ Warning: Circular dependencies found, please check and fix');
     }
   } catch (error) {
     console.error(

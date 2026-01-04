@@ -1,6 +1,5 @@
+import { getPackages } from '@nova/node-utils';
 import type { CAC } from 'cac';
-
-import { getPackages } from '@vben/node-utils';
 
 import depcheck from 'depcheck';
 
@@ -11,24 +10,24 @@ const DEFAULT_CONFIG = {
     'vite',
     'vitest',
     'unbuild',
-    '@vben/tsconfig',
-    '@vben/vite-config',
-    '@vben/tailwind-config',
+    '@nova/tsconfig',
+    '@nova/vite-config',
+    '@nova/tailwind-config',
     '@types/*',
-    '@vben-core/design',
+    '@nova-core/design',
   ],
   // 需要忽略的包
   ignorePackages: [
-    '@vben/backend-mock',
-    '@vben/commitlint-config',
-    '@vben/eslint-config',
-    '@vben/node-utils',
-    '@vben/prettier-config',
-    '@vben/stylelint-config',
-    '@vben/tailwind-config',
-    '@vben/tsconfig',
-    '@vben/vite-config',
-    '@vben/vsh',
+    '@nova/backend-mock',
+    '@nova/commitlint-config',
+    '@nova/eslint-config',
+    '@nova/node-utils',
+    '@nova/prettier-config',
+    '@nova/stylelint-config',
+    '@nova/tailwind-config',
+    '@nova/tsconfig',
+    '@nova/vite-config',
+    '@nova/vsh',
   ],
   // 需要忽略的文件模式
   ignorePatterns: ['dist', 'node_modules', 'public'],
@@ -153,10 +152,7 @@ async function runDepcheck(config: DepcheckConfig = {}): Promise<void> {
       console.log('\n✅ Dependency check completed, no issues found');
     }
   } catch (error) {
-    console.error(
-      '❌ Dependency check failed:',
-      error instanceof Error ? error.message : error,
-    );
+    console.error('❌ Dependency check failed:', error instanceof Error ? error.message : error);
   }
 }
 
@@ -167,18 +163,9 @@ async function runDepcheck(config: DepcheckConfig = {}): Promise<void> {
 function defineDepcheckCommand(cac: CAC): void {
   cac
     .command('check-dep')
-    .option(
-      '--ignore-packages <packages>',
-      'Packages to ignore, comma separated',
-    )
-    .option(
-      '--ignore-matches <matches>',
-      'Dependency patterns to ignore, comma separated',
-    )
-    .option(
-      '--ignore-patterns <patterns>',
-      'File patterns to ignore, comma separated',
-    )
+    .option('--ignore-packages <packages>', 'Packages to ignore, comma separated')
+    .option('--ignore-matches <matches>', 'Dependency patterns to ignore, comma separated')
+    .option('--ignore-patterns <patterns>', 'File patterns to ignore, comma separated')
     .usage('Analyze project dependencies')
     .action(async ({ ignoreMatches, ignorePackages, ignorePatterns }) => {
       const config: DepcheckConfig = {

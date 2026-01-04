@@ -1,6 +1,5 @@
+import { execaCommand } from '@nova/node-utils';
 import type { CAC } from 'cac';
-
-import { execaCommand } from '@vben/node-utils';
 
 interface LintCommandOptions {
   /**

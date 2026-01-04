@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@clack/prompts": "catalog:",
-    "@vben/node-utils": "workspace:*",
+    "@nova/node-utils": "workspace:*",
     "cac": "catalog:"
   }
 }

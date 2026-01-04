@@ -1,7 +1,4 @@
-import type { CAC } from 'cac';
-
 import { join, relative } from 'node:path';
-
 import {
   colors,
   consola,
@@ -11,9 +8,10 @@ import {
   outputJSON,
   prettierFormat,
   toPosixPath,
-} from '@vben/node-utils';
+} from '@nova/node-utils';
+import type { CAC } from 'cac';
 
-const CODE_WORKSPACE_FILE = join('vben-admin.code-workspace');
+const CODE_WORKSPACE_FILE = join('nova-admin.code-workspace');
 
 interface CodeWorkspaceCommandOptions {
   autoCommit?: boolean;
@@ -46,10 +44,7 @@ async function createCodeWorkspace({
   }
 }
 
-async function runCodeWorkspace({
-  autoCommit,
-  spaces,
-}: CodeWorkspaceCommandOptions) {
+async function runCodeWorkspace({ autoCommit, spaces }: CodeWorkspaceCommandOptions) {
   await createCodeWorkspace({
     autoCommit,
     spaces,
