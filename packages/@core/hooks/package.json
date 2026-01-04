@@ -36,10 +36,9 @@
   },
   "dependencies": {
     "@nova-core/shared": "workspace:*",
-    "@vueuse/core": "catalog:",
-    "reka-ui": "catalog:",
-    "sortablejs": "catalog:",
-    "vue": "catalog:"
+    "ahooks": "catalog:",
+    "react": "catalog:",
+    "sortablejs": "catalog:"
   },
   "devDependencies": {
     "@types/sortablejs": "catalog:"
