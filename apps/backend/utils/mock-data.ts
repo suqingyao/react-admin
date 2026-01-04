@@ -16,9 +16,9 @@ export const MOCK_USERS: UserInfo[] = [
   {
     id: 0,
     password: '123456',
-    realName: 'Vben',
+    realName: 'Nova',
     roles: ['super'],
-    username: 'vben',
+    username: 'nova',
   },
   {
     id: 1,
@@ -42,7 +42,7 @@ export const MOCK_CODES = [
   // super
   {
     codes: ['AC_100100', 'AC_100110', 'AC_100120', 'AC_100010'],
-    username: 'vben',
+    username: 'nova',
   },
   {
     // admin
@@ -179,7 +179,7 @@ const createDemosMenus = (role: 'admin' | 'super' | 'user') => {
 export const MOCK_MENUS = [
   {
     menus: [...dashboardMenus, ...createDemosMenus('super')],
-    username: 'vben',
+    username: 'nova',
   },
   {
     menus: [...dashboardMenus, ...createDemosMenus('admin')],
@@ -315,11 +315,11 @@ export const MOCK_MENU_LIST = [
     meta: {
       badgeType: 'dot',
       order: 9998,
-      title: 'demos.vben.title',
+      title: 'demos.nova.title',
       icon: 'carbon:data-center',
     },
     name: 'Project',
-    path: '/vben-admin',
+    path: '/nova-admin',
     type: 'catalog',
     status: 1,
     children: [
@@ -327,27 +327,27 @@ export const MOCK_MENU_LIST = [
         id: 901,
         pid: 9,
         name: 'VbenDocument',
-        path: '/vben-admin/document',
+        path: '/nova-admin/document',
         component: 'IFrameView',
         type: 'embedded',
         status: 1,
         meta: {
           icon: 'carbon:book',
-          iframeSrc: 'https://doc.vben.pro',
-          title: 'demos.vben.document',
+          iframeSrc: 'https://doc.nova.pro',
+          title: 'demos.nova.document',
         },
       },
       {
         id: 902,
         pid: 9,
         name: 'VbenGithub',
-        path: '/vben-admin/github',
+        path: '/nova-admin/github',
         component: 'IFrameView',
         type: 'link',
         status: 1,
         meta: {
           icon: 'carbon:logo-github',
-          link: 'https://github.com/vbenjs/vue-vben-admin',
+          link: 'https://github.com/vbenjs/vue-nova-admin',
           title: 'Github',
         },
       },
@@ -355,15 +355,15 @@ export const MOCK_MENU_LIST = [
         id: 903,
         pid: 9,
         name: 'VbenAntdv',
-        path: '/vben-admin/antdv',
+        path: '/nova-admin/antdv',
         component: 'IFrameView',
         type: 'link',
         status: 0,
         meta: {
           icon: 'carbon:hexagon-vertical-solid',
           badgeType: 'dot',
-          link: 'https://ant.vben.pro',
-          title: 'demos.vben.antdv',
+          link: 'https://ant.nova.pro',
+          title: 'demos.nova.antdv',
         },
       },
     ],
@@ -376,7 +376,7 @@ export const MOCK_MENU_LIST = [
     meta: {
       icon: 'lucide:copyright',
       order: 9999,
-      title: 'demos.vben.about',
+      title: 'demos.nova.about',
     },
     name: 'About',
     path: '/about',
