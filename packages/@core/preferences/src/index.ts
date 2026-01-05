@@ -2,7 +2,7 @@ import { preferencesManager } from './preferences';
 import type { Preferences } from './types';
 
 // 偏好设置（带有层级关系）
-const preferences: Preferences = preferencesManager.getPreferences.apply(preferencesManager);
+const preferences: Preferences = preferencesManager.getPreferences();
 
 // 更新偏好设置
 const updatePreferences = preferencesManager.updatePreferences.bind(preferencesManager);

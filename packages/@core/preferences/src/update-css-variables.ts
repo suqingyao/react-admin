@@ -9,6 +9,8 @@ import type { Preferences } from './types';
  */
 function updateCSSVariables(preferences: Preferences) {
   // 当修改到颜色变量时，更新 css 变量
+  if (typeof document === 'undefined') return;
+
   const root = document.documentElement;
   if (!root) {
     return;
@@ -54,7 +56,6 @@ function updateCSSVariables(preferences: Preferences) {
     Reflect.has(theme, 'colorSuccess') ||
     Reflect.has(theme, 'colorWarning')
   ) {
-    // preferences.theme.colorPrimary = builtinTypeColorPrimary || colorPrimary;
     updateMainColorVariables(preferences);
   }
 
@@ -82,7 +83,7 @@ function updateMainColorVariables(preference: Preferences) {
   ]);
 
   // 要设置的 CSS 变量映射
-  const colorMappings = {
+  const colorMappings: Record<string, string> = {
     '--green-500': '--success',
     '--primary-500': '--primary',
     '--red-500': '--destructive',
@@ -101,6 +102,8 @@ function updateMainColorVariables(preference: Preferences) {
 }
 
 function isDarkTheme(theme: string) {
+  if (typeof window === 'undefined') return false;
+  
   let dark = theme === 'dark';
   if (theme === 'auto') {
     dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
